@@ -9,30 +9,25 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var items = [
-        Characters(phrase: "Find Mike"),
-        Characters(phrase: "Buy Eggos"),
-        Characters(phrase: "Destroy Demogorgon")
-    ]
     
-    @State var clickedItems:Set<UUID> = []
+    @ObservedObject var todoManager = ToDoManager()
+    
     @State var showAlert: Bool = false
     @State var textField: String = ""
-    
     
     var body: some View {
         NavigationView{
             ZStack {
-                List(items){ item in
+                List(todoManager.items){ item in
                     Button(action: {
-                        if self.clickedItems.contains(item.id){
-                            self.clickedItems.remove(item.id)
+                        if self.todoManager.itemInSet(item: item.id){
+                            self.todoManager.removeFromSet(item: item.id)
                         }
                         else {
-                            self.clickedItems.insert(item.id)
+                            self.todoManager.addItemSet(item: item.id)
                         }
                     }) {
-                        if self.clickedItems.contains(item.id) {
+                        if self.todoManager.itemInSet(item: item.id) {
                             HStack{
                                 Text(item.phrase)
                                 Spacer()
@@ -53,15 +48,11 @@ struct ContentView: View {
                 }))
                 
                 if self.showAlert == true {
-                    AlertControlView(textString: $textField, showAlert: $showAlert, items: $items, title: "Add Item", message: "")
+                    AlertControlView(textString: $textField, showAlert: $showAlert, items: $todoManager.items, title: "Add Item", message: "")
                 }
-                
             }
         }
-    }
-    
-    func addItem(toAdd: String){
-        items.append(Characters(phrase: toAdd))
+        
     }
 }
 
@@ -72,8 +63,5 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
-struct Characters: Identifiable {
-    let id: UUID = UUID()
-    let phrase: String
-}
+
 

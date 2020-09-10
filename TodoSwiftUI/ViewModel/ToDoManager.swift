@@ -10,26 +10,30 @@ import Foundation
 import SwiftUI
 
 class ToDoManager: ObservableObject {
-    @Published var items = [TodoItem]()
-    @Published var clickedItems = Set<UUID>()
+    @Published var items = [String](){
+        didSet{
+            UserDefaults.standard.set(items, forKey: "todolist")
+        }
+    }
+    @Published var clickedItems = Set<String>()
     
     init() {
-        items.append(TodoItem(phrase: "Find Mike"))
-        items.append(TodoItem(phrase: "Buy Eggos"))
-        items.append(TodoItem(phrase: "Destroy Demogorgon"))
+        let data = UserDefaults.standard.array(forKey: "todolist")
+        items = data as! [String]
     }
     
     func addToList(toAdd: String){
-        items.append(TodoItem(phrase: toAdd))
+        items.append(toAdd)
     }
     
-    func itemInSet(item: UUID) -> Bool {
+    func itemInSet(item: String) -> Bool {
         return clickedItems.contains(item)
     }
-    func removeFromSet(item: UUID){
+    func removeFromSet(item: String){
         clickedItems.remove(item)
     }
-    func addItemSet(item:UUID){
+    func addItemSet(item: String){
         clickedItems.insert(item)
     }
 }
+

@@ -18,25 +18,25 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             ZStack {
-                List(todoManager.items){ item in
+                List(todoManager.items, id: \.self){ item in
                     Button(action: {
-                        if self.todoManager.itemInSet(item: item.id){
-                            self.todoManager.removeFromSet(item: item.id)
+                        if self.todoManager.itemInSet(item: item){
+                            self.todoManager.removeFromSet(item: item)
                         }
                         else {
-                            self.todoManager.addItemSet(item: item.id)
+                            self.todoManager.addItemSet(item: item)
                         }
                     }) {
-                        if self.todoManager.itemInSet(item: item.id) {
+                        if self.todoManager.itemInSet(item: item) {
                             HStack{
-                                Text(item.phrase)
+                                Text(item)
                                 Spacer()
                                 Image(systemName: "checkmark")
                                     .foregroundColor(.black)
                             }
                         }
                         else{
-                            Text(item.phrase)
+                            Text(item)
                         }
                     }
                 }

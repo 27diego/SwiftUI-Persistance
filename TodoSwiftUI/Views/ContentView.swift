@@ -18,26 +18,26 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             ZStack {
-                List(todoManager.items, id: \.self){ item in
-                    Button(action: {
-                        if self.todoManager.itemInSet(item: item){
-                            self.todoManager.removeFromSet(item: item)
-                        }
-                        else {
-                            self.todoManager.addItemSet(item: item)
-                        }
-                    }) {
-                        if self.todoManager.itemInSet(item: item) {
-                            HStack{
-                                Text(item)
-                                Spacer()
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.black)
+                List{
+                    ForEach(todoManager.todos){ item in
+                        Button(action: {
+                            self.todoManager.checkItem(item: item)
+                        }) {
+                            if item.checked {
+                                HStack{
+                                    Text(item.todo)
+                                    Spacer()
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                            else{
+                                Text(item.todo)
                             }
                         }
-                        else{
-                            Text(item)
-                        }
+                    }.onDelete { index in
+                        index.forEach { self.todoManager.deleteItem(item: self.todoManager.todos[$0]) }
                     }
                 }
                 .navigationBarTitle("ToDo")
@@ -48,7 +48,7 @@ struct ContentView: View {
                 }))
                 
                 if self.showAlert == true {
-                    AlertControlView(textString: $textField, showAlert: $showAlert, items: $todoManager.items, title: "Add Item", message: "")
+                    AlertControlView(textString: $textField, showAlert: $showAlert, title: "Add Todo", message: "").environmentObject(todoManager)
                 }
             }
         }

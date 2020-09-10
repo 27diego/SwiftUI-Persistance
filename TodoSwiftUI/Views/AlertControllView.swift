@@ -4,7 +4,7 @@ struct AlertControlView: UIViewControllerRepresentable {
     
     @Binding var textString: String
     @Binding var showAlert: Bool
-    @Binding var items: [String]
+    @EnvironmentObject var todoManager: ToDoManager
     
     var title: String
     var message: String
@@ -46,7 +46,7 @@ struct AlertControlView: UIViewControllerRepresentable {
                 // On submit action, get texts from TextField & set it on SwiftUI View's two-way binding varaible `textString` so that View receives enter response.
                 if let textField = alert.textFields?.first, let text = textField.text {
                     self.textString = text
-                    self.items.append(self.textString)
+                    self.todoManager.addToList(toAdd: self.textString)
                     self.textString = ""
                 }
                 

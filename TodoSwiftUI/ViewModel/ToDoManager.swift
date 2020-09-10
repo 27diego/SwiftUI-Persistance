@@ -10,30 +10,31 @@ import Foundation
 import SwiftUI
 
 class ToDoManager: ObservableObject {
-    @Published var items = [String](){
+    var todoModel: Todos {
+        willSet{
+            objectWillChange.send()
+        }
         didSet{
-            UserDefaults.standard.set(items, forKey: "todolist")
+            UserDefaults.standard.set(todoModel.json, forKey: "todoModel")
         }
     }
-    @Published var clickedItems = Set<String>()
+    
+    var todos: [Todos.TodoItem] { todoModel.todos }
     
     init() {
-        let data = UserDefaults.standard.array(forKey: "todolist")
-        items = data as! [String]
+        todoModel = Todos.init(json: UserDefaults.standard.data(forKey: "todoModel")) ?? Todos()
     }
     
     func addToList(toAdd: String){
-        items.append(toAdd)
+        todoModel.addtodo(todo: toAdd)
     }
     
-    func itemInSet(item: String) -> Bool {
-        return clickedItems.contains(item)
+    func checkItem(item: Todos.TodoItem){
+        todoModel.checkItem(item: item)
     }
-    func removeFromSet(item: String){
-        clickedItems.remove(item)
-    }
-    func addItemSet(item: String){
-        clickedItems.insert(item)
+    
+    func deleteItem(item: Todos.TodoItem){
+        todoModel.deleteItemFromList(item: item.id)
     }
 }
 
